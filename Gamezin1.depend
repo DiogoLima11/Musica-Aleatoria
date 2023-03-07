@@ -1,4 +1,5 @@
 # depslib dependency file v1.0
-1678154594 source:d:\usuarios\diogo\desktop\gamezin\gamezin1\main.cpp
+1678192881 source:d:\usuarios\diogo\desktop\gamezin\gamezin1\main.cpp
 	"raylib.h"
+	<stdio.h>
 

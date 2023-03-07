@@ -1,4 +1,5 @@
 #include "raylib.h"
+#include <stdio.h>
 
 //------------------------------------------------------------------------------------
 // Program main entry point
@@ -15,7 +16,8 @@ int main(void)
 
     InitAudioDevice();              // Initialize audio device
 
-    Music music = LoadMusicStream("musica2.mp3");
+    Music music = LoadMusicStream("Musica1.mp3");
+
 
     PlayMusicStream(music);
 
@@ -48,8 +50,25 @@ int main(void)
                 }
             }
             else
+
             SetMouseCursor(1);
 
+        if(CheckCollisionPointRec(GetMousePosition(), BotaoVoltar))
+        {
+            SetMouseCursor(4);
+            if(IsMouseButtonDown(MOUSE_BUTTON_LEFT))
+            {
+              mouseProximo = false;
+              mouseAnterior = true;
+            }
+        }
+        else
+            if(IsMouseButtonDown(MOUSE_BUTTON_LEFT))
+                {
+                mouseProximo = false;
+                mouseAnterior = false;
+                SetMouseCursor(1);
+                }
 
     }
 
