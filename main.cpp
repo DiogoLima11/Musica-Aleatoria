@@ -11,15 +11,17 @@ int main(void)
     const int screenWidth = 800;
     const int screenHeight = 450;
     int telas = 0;
+    int musica = 0;
 
-    InitWindow(screenWidth, screenHeight, "Toca musica");
+    InitWindow(screenWidth, screenHeight, "Baygo Music");
 
     InitAudioDevice();              // Initialize audio device
 
-    Music music = LoadMusicStream("Musica1.mp3");
+    Music music[2] = {LoadMusicStream("Musica1.mp3"),
+                      LoadMusicStream("Musica2.mp3")};
 
-
-    PlayMusicStream(music);
+    for(musica = 0; musica <2 ; musica++)
+    PlayMusicStream(music[musica]);
 
     float timePlayed = 0.0f;        // Time played normalized [0.0f..1.0f]
     bool pause = false;
@@ -27,10 +29,11 @@ int main(void)
     bool mouseAnterior = false;
                // Music playing paused
 
-    SetTargetFPS(30);               // Set our game to run at 30 frames-per-second
+    SetTargetFPS(60);               // Set our game to run at 30 frames-per-second
+    musica = 0;
 
-     Rectangle BotaoProxima = { 608, 370, 162, 50 };
-     Rectangle BotaoVoltar = { 30, 370, 162, 50 };
+    Rectangle BotaoProxima = { 608, 370, 162, 50 };
+    Rectangle BotaoVoltar = { 30, 370, 162, 50 };
 
 
     // Main game loop
@@ -74,13 +77,13 @@ int main(void)
 
         // Update
         //----------------------------------------------------------------------------------
-        UpdateMusicStream(music);   // Update music buffer with new stream data
+        UpdateMusicStream(music[musica]);   // Update music buffer with new stream data
 
         // Restart music playing (stop and play)
         if (IsKeyPressed(KEY_R))
         {
-            StopMusicStream(music);
-            PlayMusicStream(music);
+            StopMusicStream(music[musica]);
+            PlayMusicStream(music[musica]);
         }
 
         // Pause/Resume music playing
@@ -88,12 +91,12 @@ int main(void)
         {
             pause = !pause;
 
-            if (pause) PauseMusicStream(music);
-            else ResumeMusicStream(music);
+            if (pause) PauseMusicStream(music[musica]);
+            else ResumeMusicStream(music[musica]);
         }
 
         // Get normalized time played for current music stream
-        timePlayed = GetMusicTimePlayed(music)/GetMusicTimeLength(music);
+        timePlayed = GetMusicTimePlayed(music[musica])/GetMusicTimeLength(music[musica]);
 
         if (timePlayed > 1.0f) timePlayed = 1.0f;   // Make sure time played is no longer than music
         //----------------------------------------------------------------------------------
@@ -107,7 +110,7 @@ int main(void)
             DrawText("TOCA MUSICA ALEATORIO!", 255, 150, 20, BLACK);
 
             DrawRectangle(200, 200, 400, 12, LIGHTGRAY);
-            DrawRectangle(200, 200, (int)(timePlayed*400.0f), 12, MAROON);
+            DrawRectangle(200, 200, (int)(timePlayed*400.0f), 12, BLACK);
             DrawRectangleLines(200, 200, 400, 12, GRAY);
 
             DrawText("APERTE ESPACO PARA PAUSAR A MUSICA", 215, 250, 20, BLACK);
@@ -127,7 +130,7 @@ int main(void)
 
     // De-Initialization
     //--------------------------------------------------------------------------------------
-    UnloadMusicStream(music);   // Unload music stream buffers from RAM
+    UnloadMusicStream(music[musica]);   // Unload music stream buffers from RAM
 
     CloseAudioDevice();         // Close audio device (music streaming is automatically stopped)
 
