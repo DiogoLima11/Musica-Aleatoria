@@ -9,19 +9,23 @@ int main(void)
     //--------------------------------------------------------------------------------------
     const int screenWidth = 800;
     const int screenHeight = 450;
+    int telas = 0;
 
     InitWindow(screenWidth, screenHeight, "Toca musica");
 
     InitAudioDevice();              // Initialize audio device
 
-    Music music = LoadMusicStream("musica1.mp3");
+    Music music = LoadMusicStream("musica2.mp3");
 
     PlayMusicStream(music);
 
     float timePlayed = 0.0f;        // Time played normalized [0.0f..1.0f]
-    bool pause = false;             // Music playing paused
+    bool pause = false;
+    bool mouseProximo = false;
+    bool mouseAnterior = false;
+               // Music playing paused
 
-    SetTargetFPS(90);               // Set our game to run at 30 frames-per-second
+    SetTargetFPS(30);               // Set our game to run at 30 frames-per-second
 
      Rectangle BotaoProxima = { 608, 370, 162, 50 };
      Rectangle BotaoVoltar = { 30, 370, 162, 50 };
@@ -30,6 +34,25 @@ int main(void)
     // Main game loop
     while (!WindowShouldClose())    // Detect window close button or ESC key
     {
+         switch(telas)
+    {
+        case 0:
+
+        if (CheckCollisionPointRec(GetMousePosition(), BotaoProxima))
+            {
+                SetMouseCursor(4);
+                if(IsMouseButtonDown(MOUSE_BUTTON_LEFT))
+                {
+                mouseProximo = true;
+                mouseAnterior = false;
+                }
+            }
+            else
+            SetMouseCursor(1);
+
+
+    }
+
         // Update
         //----------------------------------------------------------------------------------
         UpdateMusicStream(music);   // Update music buffer with new stream data
@@ -94,3 +117,4 @@ int main(void)
 
     return 0;
 }
+
