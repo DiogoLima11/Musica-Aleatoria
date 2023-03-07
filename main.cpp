@@ -23,6 +23,7 @@ int main(void)
     for(musica = 0; musica <2 ; musica++)
     PlayMusicStream(music[musica]);
 
+
     float timePlayed = 0.0f;        // Time played normalized [0.0f..1.0f]
     bool pause = false;
     bool mouseProximo = false;
@@ -39,10 +40,6 @@ int main(void)
     // Main game loop
     while (!WindowShouldClose())    // Detect window close button or ESC key
     {
-         switch(telas)
-    {
-        case 0:
-
         if (CheckCollisionPointRec(GetMousePosition(), BotaoProxima))
             {
                 SetMouseCursor(4);
@@ -50,11 +47,14 @@ int main(void)
                 {
                 mouseProximo = true;
                 mouseAnterior = false;
+                musica ++;
+                UpdateMusicStream(music[musica]);
+                SeekMusicStream(music [musica], 0.1);
+                printf("%d",GetMusicTimePlayed(music[musica]));
                 }
             }
             else
-
-            SetMouseCursor(1);
+                SetMouseCursor(1);
 
         if(CheckCollisionPointRec(GetMousePosition(), BotaoVoltar))
         {
@@ -63,6 +63,7 @@ int main(void)
             {
               mouseProximo = false;
               mouseAnterior = true;
+              musica --;
             }
         }
         else
@@ -73,7 +74,10 @@ int main(void)
                 SetMouseCursor(1);
                 }
 
-    }
+    if (GetMusicTimePlayed(music[musica]) >= GetMusicTimeLength(music[musica]) - 0.05 && musica < 2)
+            musica++;
+    else
+        musica = 0;
 
         // Update
         //----------------------------------------------------------------------------------
