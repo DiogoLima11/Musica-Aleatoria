@@ -12,22 +12,30 @@ int main(void)
     const int screenHeight = 450;
     int telas = 0;
     int musica = 0;
+    int Qmusicas = 5;
 
-    InitWindow(screenWidth, screenHeight, "Baygo Music");
+    InitWindow(screenWidth, screenHeight, "SpotSaco");
 
     InitAudioDevice();              // Initialize audio device
 
-    Music music[2] = {LoadMusicStream("Musica1.mp3"),
-                      LoadMusicStream("Musica2.mp3")};
+    Texture2D capaFundo = LoadTexture("SpotSaco2.png");
+    Music music[Qmusicas] = {LoadMusicStream("Is This Love.mp3"),
+                      LoadMusicStream("Meca Cereja.mp3"),
+                      LoadMusicStream("Noite Fria.mp3"),
+                      LoadMusicStream("Scarsito.mp3"),
+                      LoadMusicStream("Eu Quero So Voce.mp3")};
 
-    for(musica = 0; musica <2 ; musica++)
+    for(musica = 0; musica < Qmusicas ; musica++)
     PlayMusicStream(music[musica]);
 
+    printf("\n[ESPACO] PAUSA A MUSICA\n");
+    printf("[R] RENICIA A MUSICA\n");
 
     float timePlayed = 0.0f;        // Time played normalized [0.0f..1.0f]
     bool pause = false;
     bool mouseProximo = false;
     bool mouseAnterior = false;
+    bool click = true;
                // Music playing paused
 
     SetTargetFPS(60);               // Set our game to run at 30 frames-per-second
@@ -40,43 +48,37 @@ int main(void)
     // Main game loop
     while (!WindowShouldClose())    // Detect window close button or ESC key
     {
+        SetMusicVolume(music[musica], 2);
         if (CheckCollisionPointRec(GetMousePosition(), BotaoProxima))
             {
                 SetMouseCursor(4);
-                if(IsMouseButtonDown(MOUSE_BUTTON_LEFT))
+                if(IsMouseButtonDown(MOUSE_BUTTON_LEFT) && click == true && musica < Qmusicas -1)
                 {
-                mouseProximo = true;
-                mouseAnterior = false;
-                musica ++;
-                UpdateMusicStream(music[musica]);
-                SeekMusicStream(music [musica], 0.1);
-                printf("%d",GetMusicTimePlayed(music[musica]));
+                    musica++;
+                    SeekMusicStream(music[musica],0);
+                    click = false;
+                }
+            }
+             else if (CheckCollisionPointRec(GetMousePosition(), BotaoVoltar))
+            {
+                SetMouseCursor(4);
+                if(IsMouseButtonDown(MOUSE_BUTTON_LEFT) && click == true && musica > 0)
+                {
+                    musica--;
+                    SeekMusicStream(music[musica],0);
+                    click = false;
                 }
             }
             else
                 SetMouseCursor(1);
 
-        if(CheckCollisionPointRec(GetMousePosition(), BotaoVoltar))
-        {
-            SetMouseCursor(4);
-            if(IsMouseButtonDown(MOUSE_BUTTON_LEFT))
-            {
-              mouseProximo = false;
-              mouseAnterior = true;
-              musica --;
-            }
-        }
-        else
-            if(IsMouseButtonDown(MOUSE_BUTTON_LEFT))
-                {
-                mouseProximo = false;
-                mouseAnterior = false;
-                SetMouseCursor(1);
-                }
 
-    if (GetMusicTimePlayed(music[musica]) >= GetMusicTimeLength(music[musica]) - 0.05 && musica < 2)
+            if(IsMouseButtonUp(MOUSE_BUTTON_LEFT))
+                click = true;
+
+    if (GetMusicTimePlayed(music[musica]) >= GetMusicTimeLength(music[musica]) - 0.01 && musica < Qmusicas -1)
             musica++;
-    else
+    if (GetMusicTimePlayed(music[musica]) >= GetMusicTimeLength(music[musica]) - 0.01 && musica > Qmusicas -1)
         musica = 0;
 
         // Update
@@ -109,23 +111,12 @@ int main(void)
         //----------------------------------------------------------------------------------
         BeginDrawing();
 
-            ClearBackground(RAYWHITE);
+            DrawTexture(capaFundo,0,0,WHITE);
 
-            DrawText("TOCA MUSICA ALEATORIO!", 255, 150, 20, BLACK);
+            DrawRectangle(200, 390, (int)(timePlayed*400.0f), 12, BLACK);
+            DrawRectangleLines(200, 390, 400, 12, BLACK);
 
-            DrawRectangle(200, 200, 400, 12, LIGHTGRAY);
-            DrawRectangle(200, 200, (int)(timePlayed*400.0f), 12, BLACK);
-            DrawRectangleLines(200, 200, 400, 12, GRAY);
-
-            DrawText("APERTE ESPACO PARA PAUSAR A MUSICA", 215, 250, 20, BLACK);
-            DrawText("APERTE R PARA RENICIAR A MUSICA", 235, 280, 20, BLACK);
-
-            DrawRectangleRec(BotaoProxima, WHITE);
-            DrawRectangleLines((int)BotaoProxima.x, (int)BotaoProxima.y, (int)BotaoProxima.width, (int)BotaoProxima.height, BLACK);
             DrawText("Proxima", (int)BotaoProxima.x + 5, (int)BotaoProxima.y + 8, 40, BLACK);
-
-            DrawRectangleRec(BotaoVoltar, WHITE);
-            DrawRectangleLines((int)BotaoVoltar.x, (int)BotaoVoltar.y, (int)BotaoVoltar.width, (int)BotaoVoltar.height, BLACK);
             DrawText("Voltar", (int)BotaoVoltar.x + 15, (int)BotaoVoltar.y + 8, 40, BLACK);
 
         EndDrawing();
@@ -134,7 +125,9 @@ int main(void)
 
     // De-Initialization
     //--------------------------------------------------------------------------------------
+    for(musica = 0; musica < Qmusicas ; musica++)
     UnloadMusicStream(music[musica]);   // Unload music stream buffers from RAM
+    UnloadTexture(capaFundo);
 
     CloseAudioDevice();         // Close audio device (music streaming is automatically stopped)
 
