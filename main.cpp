@@ -12,7 +12,7 @@ int main(void)
     const int screenHeight = 450;
     int telas = 0;
     int musica = 0;
-    int Qmusicas = 5;
+    int Qmusicas = 6;
 
     InitWindow(screenWidth, screenHeight, "SpotSaco");
 
@@ -23,7 +23,8 @@ int main(void)
                       LoadMusicStream("Meca Cereja.mp3"),
                       LoadMusicStream("Noite Fria.mp3"),
                       LoadMusicStream("Scarsito.mp3"),
-                      LoadMusicStream("Eu Quero So Voce.mp3")};
+                      LoadMusicStream("Eu Quero So Voce.mp3"),
+                      LoadMusicStream("Migo ou Vida.mp3")};
 
     for(musica = 0; musica < Qmusicas ; musica++)
     PlayMusicStream(music[musica]);
